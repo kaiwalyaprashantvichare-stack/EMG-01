@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aerostat Deployment Proposal: Nashik Kumbh Mela 2027</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Neutral Tones -->
+    <!-- Application Structure Plan: The application is designed as a single-page interactive dashboard with a sticky top navigation for seamless exploration. This structure was chosen over a linear document to allow stakeholders (e.g., technical evaluators, project managers) to quickly access specific information relevant to their roles, such as 'Testing Plan' or 'Competitive Edge'. The core interaction model uses expandable accordion cards and tabs to manage information density. This presents high-level summaries first, with detailed information available on-demand via clicks. This task-oriented, non-linear approach enhances usability and allows for a more efficient review of the complex proposal details. -->
+    <!-- Visualization & Content Choices: 
+        1. Nashik Wind Data -> Goal: Inform -> Viz: Line Chart -> Interaction: Hover tooltips -> Justification: Provides immediate visual context for the primary environmental challenge (wind), making the data from the report more impactful. -> Library: Chart.js/Canvas.
+        2. Design & Atmospheric Challenges -> Goal: Organize -> Viz: Interactive Accordion Cards -> Interaction: Click to expand/collapse -> Justification: Deconstructs dense technical text into digestible, thematic chunks, preventing cognitive overload and improving clarity. -> Library/Method: Vanilla JS + Tailwind CSS.
+        3. Testing Plan -> Goal: Organize (Hierarchical) -> Viz: Tabs for phases, with nested accordions for checkpoints -> Interaction: Click tabs, then click items to see details -> Justification: Creates a clear, drill-down structure that mirrors a formal testing protocol, making it easy to navigate and verify completeness. -> Library/Method: Vanilla JS + Tailwind CSS.
+        4. Aerostat vs. Drones -> Goal: Compare/Persuade -> Viz: Horizontal Bar Chart & Key Feature Cards -> Interaction: Static visual with clear data labels -> Justification: Delivers a powerful, at-a-glance comparison of the key competitive advantage (endurance), which is more persuasive than text alone. -> Library: Chart.js/Canvas.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #1e3a8a;
+            border-bottom-color: #1e3a8a;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-btn.active {
+            background-color: #1e3a8a;
+            color: white;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <h1 class="text-xl md:text-2xl font-bold text-gray-900">Aerostat Proposal Dashboard</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#overview" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent">Overview</a>
+                        <a href="#challenges" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent">Design Challenges</a>
+                        <a href="#testing" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent">Testing Plan</a>
+                        <a href="#performance" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent">Atmospheric Performance</a>
+                        <a href="#competitive" class="nav-link px-3 py-2 text-sm font-medium text-gray-600 border-b-2 border-transparent">Competitive Edge</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        
+        <section id="overview" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Project Overview: Kumbh Mela 2027, Nashik</h2>
+            <p class="text-lg text-gray-600 mb-8 max-w-4xl">An interactive analysis of the strategic deployment of an aerostat for persistent surveillance and crowd management at ritual sites. This proposal addresses key design, testing, and environmental challenges to ensure operational excellence and public safety.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-900">Situational Context</h3>
+                    <p class="text-gray-700 mb-4">Nashik is preparing for extremely high crowd density at defined bathing and ritual sites for the 2027 Kumbh Mela. Our aerostat solution provides persistent, wide-area surveillance, a critical capability for managing an event of this scale, especially under intense public and governmental scrutiny.</p>
+                     <ul class="space-y-2">
+                        <li class="flex items-start">
+                            <span class="text-blue-600 mr-2 mt-1">✓</span>
+                            <span><strong>High-Density Crowds:</strong> Requires continuous monitoring of ghats and streets.</span>
+                        </li>
+                        <li class="flex items-start">
+                             <span class="text-blue-600 mr-2 mt-1">✓</span>
+                            <span><strong>Complex Terrain:</strong> River corridors and buildings create challenging microclimates.</span>
+                        </li>
+                        <li class="flex items-start">
+                             <span class="text-blue-600 mr-2 mt-1">✓</span>
+                            <span><strong>Dynamic Events:</strong> Rituals demand flexible and rapid operational windows.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card p-6 flex flex-col">
+                     <h3 class="text-xl font-semibold mb-4 text-blue-900">Nashik Average Wind Speed (mph)</h3>
+                     <p class="text-sm text-gray-600 mb-4">Historical data shows a windier season from May-August. Our design and operational limits are specified with significant safety margins to handle peak gusts well above these monthly averages.</p>
+                     <div class="chart-container flex-grow">
+                        <canvas id="windChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="challenges" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Top-Level Design Challenges</h2>
+            <div id="challenges-container" class="space-y-4"></div>
+        </section>
+
+        <section id="testing" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Testing & Acceptance Checkpoints</h2>
+            <div class="card p-6">
+                <div class="mb-6 border-b border-gray-200">
+                    <nav id="test-tabs" class="-mb-px flex space-x-4" aria-label="Tabs"></nav>
+                </div>
+                <div id="test-content-container"></div>
+            </div>
+        </section>
+
+        <section id="performance" class="mb-16 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Behaviour Under Atmospheric Conditions</h2>
+            <div id="performance-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <section id="competitive" class="scroll-mt-20">
+            <h2 class="text-3xl font-bold text-gray-900 mb-6">Competitive Edge: Aerostat vs. Drones</h2>
+             <p class="text-lg text-gray-600 mb-8 max-w-4xl">While drones offer agility, aerostats provide unmatched persistence, area coverage, and cost-efficiency for wide-area surveillance, making them the superior strategic asset for an event of this duration and scale.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-900">Key Differentiators</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-semibold">🥇 Unmatched Persistence</h4>
+                            <p class="text-gray-700">Provides continuous 24/7 surveillance for days, compared to the limited flight times of drones requiring frequent battery swaps and multiple sorties.</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">🌍 Superior Area Coverage</h4>
+                            <p class="text-gray-700">A single aerostat offers a persistent, wide-area view, covering a larger footprint than a fleet of drones and reducing operator workload.</p>
+                        </div>
+                         <div>
+                            <h4 class="font-semibold">💰 Lower Cost Per Hour</h4>
+                            <p class="text-gray-700">Dramatically lower operational cost per hour for continuous monitoring, eliminating the high logistical and manpower costs of sustained drone operations.</p>
+                        </div>
+                         <div>
+                            <h4 class="font-semibold">🛡️ Enhanced Safety & Reliability</h4>
+                            <p class="text-gray-700">Tethered operation provides a secure power/data link and a predictable operational footprint, with robust, tested SOPs for crowd safety.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-6 flex flex-col">
+                    <h3 class="text-xl font-semibold mb-4 text-blue-900">Surveillance Endurance Comparison</h3>
+                    <div class="chart-container flex-grow">
+                        <canvas id="enduranceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-gray-500">
+            <p>&copy; 2025 Aerostat Solutions Inc. Confidential Proposal Document.</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    
+    const challengesData = [
+        { title: "Wind Capability & Microclimates", content: "<strong>Challenge:</strong> River corridors and urban structures create localized gusts. <br><strong>Mitigation:</strong> Specify and test for operational (e.g., up to 70 kt) and survival wind speeds, using on-site wind studies to inform mooring locations and safety factors." },
+        { title: "Payload Stabilization", content: "<strong>Challenge:</strong> Maintain a stable, clear image during gusts and platform motion. <br><strong>Mitigation:</strong> Employ a gyro-stabilized gimbal, advanced vibration isolation, and image processing algorithms to ensure continuous target lock." },
+        { title: "Tether & Mooring Robustness", content: "<strong>Challenge:</strong> Ensure safe anchoring and tether management near large crowds. <br><strong>Mitigation:</strong> Use high-strength tethers, redundant anchor points (fixed or mobile), and implement rapid-winch procedures for emergency recovery." },
+        { title: "Rapid Launch & Recovery", content: "<strong>Challenge:</strong> Dynamic ritual schedules require fast deployment and retrieval. <br><strong>Mitigation:</strong> System designed for rapid launch/recovery cycles, with trained crews and SOPs for operations under changing wind and crowd conditions." },
+        { title: "Airspace & Crowd Safety", content: "<strong>Challenge:</strong> Coordinate with ATC and ensure public safety over densely populated areas. <br><strong>Mitigation:</strong> Establish NOTAMs, define clear exclusion zones, and have validated emergency descent paths to pre-determined safe locations." },
+        { title: "Power & Data Resiliency", content: "<strong>Challenge:</strong> Maintain a secure, uninterrupted data feed to command centers. <br><strong>Mitigation:</strong> Utilize a high-reliability power/data umbilical with fiber optics, with RF/cellular backup and robust cybersecurity protocols." },
+        { title: "Lightning & Weather Hazards", content: "<strong>Challenge:</strong> Protect the system and personnel during thunderstorms. <br><strong>Mitigation:</strong> Integrate lightning detection systems that trigger automated rapid descent, combined with proper grounding at the mooring station." },
+        { title: "Maintenance & Logistics", content: "<strong>Challenge:</strong> Sustain operations over a multi-week event. <br><strong>Mitigation:</strong> A comprehensive logistics plan including on-site helium top-ups, spares, and a 24/7 roster of trained operators and maintenance crew." }
+    ];
+
+    const testingData = {
+        "A — Design Verification": [
+            { title: "Envelope Material & Seam Test", content: "<strong>Test:</strong> Burst strength, seam peel, and helium permeation tests. <br><strong>Acceptance:</strong> Leakage rate below vendor-specified threshold (e.g., < X% per week) to ensure a 7-14 day top-off interval." },
+            { title: "Tether Tensile & Fatigue Test", content: "<strong>Test:</strong> Proof load test at 2x working load and cyclic fatigue simulation. <br><strong>Acceptance:</strong> No permanent deformation or significant strength reduction after simulated mission cycles." },
+            { title: "Gimbal / Sensor Bench Test", content: "<strong>Test:</strong> Verify stabilization performance under simulated gust conditions. <br><strong>Acceptance:</strong> EO/IR jitter below the threshold for target recognition at specified ranges." },
+            { title: "Winch & Emergency Release Test", content: "<strong>Test:</strong> Validate motor torque, emergency brake, and auto-retract functions. <br><strong>Acceptance:</strong> Controlled descent rate is within safe limits; winch responds to E-stop within 2 seconds." }
+        ],
+        "B — Field Commissioning": [
+             { title: "Controlled Low-Altitude Flights", content: "<strong>Procedure:</strong> Incremental flight envelope expansion, exercising up to operational wind limits in steps. <br><strong>Acceptance:</strong> Payload remains stable and tether load is within the predicted envelope." },
+             { title: "Gust Exposure & Endurance Test", content: "<strong>Procedure:</strong> Fly for 24-72 hours in representative conditions to check helium loss, payload heating, and data link stability. <br><strong>Acceptance:</strong> Continuous video feed maintains >99% uptime." },
+             { title: "Rapid-Retrieval Drill", content: "<strong>Procedure:</strong> Simulate emergency (e.g., lightning alert) and planned rapid retrieval. <br><strong>Acceptance:</strong> System is retrieved safely within the time defined by the SOP." },
+             { title: "Anchor & Mooring Stability Test", content: "<strong>Procedure:</strong> Apply lateral pulls to the mooring to verify anchor hold capacity. <br><strong>Acceptance:</strong> Anchor holds to the design safety factor (e.g., SF ≥ 2.5)." }
+        ],
+        "C — Systems & Integration": [
+            { title: "Data Path & Security Test", content: "<strong>Test:</strong> End-to-end test of the data feed to command center, including latency, encryption, and failover. <br><strong>Acceptance:</strong> Secure feed with <1s latency; automatic failover completes in <10s." },
+            { title: "Power & Umbilical Continuity Test", content: "<strong>Test:</strong> Simulate mains failure to validate backup power engagement. <br><strong>Acceptance:</strong> Backup power supports full payload for the specified hold time." },
+            { title: "EMI / RF Compatibility Test", content: "<strong>Test:</strong> Operate all sensors and electronics to check for mutual interference. <br><strong>Acceptance:</strong> No degradation of imagery or telemetry from RF interference." }
+        ],
+        "D — Environmental / Durability": [
+            { title: "UV Exposure & Temperature Cycle", content: "<strong>Procedure:</strong> Accelerated aging of envelope samples to predict performance. <br><strong>Acceptance:</strong> Strength loss remains within vendor-specified limits over the event duration." },
+            { title: "Rain Ingress & Drainage Test", content: "<strong>Test:</strong> Simulated heavy rainfall on the envelope and payload housings. <br><strong>Acceptance:</strong> No water ingress into critical electronics." }
+        ],
+        "E — Crowd-Safety & SOPs": [
+            { title: "Public Safety Zone Drill", content: "<strong>Procedure:</strong> Deploy safety barriers and test crowd management SOPs around the mooring site. <br><strong>Acceptance:</strong> Physical barriers and trained marshals validated." },
+            { title: "Airspace & NOTAM Test", content: "<strong>Procedure:</strong> Coordinate with local ATC and verify NOTAM filings. <br><strong>Acceptance:</strong> Written confirmation of airspace restrictions received." }
+        ]
+    };
+
+    const performanceData = [
+        { icon: '💨', title: "Steady Winds & Gusts", content: "<strong>Behavior:</strong> Steady winds cause drag and pitch; gusts induce transient loads. <br><strong>Mitigation:</strong> Aerodynamic envelope with stabilizing fins, a winch capable of active tension control, and clearly defined operational wind limits." },
+        { icon: '🏞️', title: "Turbulence & Channeling", content: "<strong>Behavior:</strong> Localized vortices near buildings/ghats create short, high-G accelerations. <br><strong>Mitigation:</strong> On-site wind studies to select optimal mooring locations, higher safety factors for tether/anchoring, and gust sensors to trigger auto-retract." },
+        { icon: '☀️', title: "Thermals & Diurnal Winds", content: "<strong>Behavior:</strong> Updrafts/downdrafts can change net buoyancy and tether tension. <br><strong>Mitigation:</strong> On-board pressure/temperature monitoring combined with an active ballast or tether control system to maintain stable altitude." },
+        { icon: '🌧️', title: "Rain & High Humidity", content: "<strong>Behavior:</strong> Rain adds weight and can affect mass distribution; humidity poses risks to electronics. <br><strong>Mitigation:</strong> IP67-rated housings for all payloads, water-shedding fabric coatings, and robust drainage design." },
+        { icon: '⚡', title: "Lightning & Electrical Storms", content: "<strong>Behavior:</strong> The aerostat and tether are a primary lightning target, posing an enormous hazard. <br><strong>Mitigation:</strong> An absolute operational exclusion zone if storms are within a defined radius, supported by integrated lightning detection that triggers an automated rapid-descent procedure. Full grounding at the mooring station is mandatory." },
+        { icon: '🌫️', title: "Dust & Particulates", content: "<strong>Behavior:</strong> Dust can accelerate fabric abrasion and clog vents or seals. <br><strong>Mitigation:</strong> Use of abrasion-resistant fabrics at key contact points, dust filters on all electronic enclosures, and a scheduled cleaning SOP." }
+    ];
+
+    function createAccordionItem(item, index) {
+        return `
+            <div class="card overflow-hidden">
+                <button class="accordion-toggle w-full flex justify-between items-center text-left p-5 font-semibold text-lg text-gray-800 hover:bg-gray-50">
+                    <span>${item.title}</span>
+                    <span class="transform transition-transform duration-300 text-blue-800">▼</span>
+                </button>
+                <div class="accordion-content">
+                    <div class="p-5 pt-0 text-gray-700">${item.content}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    const challengesContainer = document.getElementById('challenges-container');
+    challengesContainer.innerHTML = challengesData.map(createAccordionItem).join('');
+    
+    const performanceContainer = document.getElementById('performance-container');
+    performanceContainer.innerHTML = performanceData.map(item => `
+        <div class="card p-6">
+            <div class="text-4xl mb-3">${item.icon}</div>
+            <h3 class="text-xl font-semibold mb-2 text-blue-900">${item.title}</h3>
+            <div class="text-gray-700">${item.content}</div>
+        </div>
+    `).join('');
+
+    const testTabsContainer = document.getElementById('test-tabs');
+    const testContentContainer = document.getElementById('test-content-container');
+    Object.keys(testingData).forEach((key, index) => {
+        const isActive = index === 0;
+        testTabsContainer.innerHTML += `<button class="tab-btn whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm ${isActive ? 'active' : ''}" data-tab="${index}">${key}</button>`;
+        
+        const contentItems = testingData[key].map(createAccordionItem).join('');
+        testContentContainer.innerHTML += `<div class="tab-content space-y-4 ${isActive ? 'active' : ''}" id="tab-content-${index}">${contentItems}</div>`;
+    });
+
+    document.querySelectorAll('.accordion-toggle').forEach(button => {
+        button.addEventListener('click', () => {
+            const content = button.nextElementSibling;
+            const arrow = button.querySelector('span:last-child');
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                arrow.style.transform = 'rotate(180deg)';
+            }
+        });
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`tab-content-${button.dataset.tab}`).classList.add('active');
+        });
+    });
+    
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('section');
+
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 80) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').substring(1) === current) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+    const windCtx = document.getElementById('windChart').getContext('2d');
+    new Chart(windCtx, {
+        type: 'line',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            datasets: [{
+                label: 'Average Wind Speed (mph)',
+                data: [6.5, 7, 8, 9.5, 12, 14.5, 15, 13.5, 10, 8, 6, 5.5],
+                borderColor: '#1e3a8a',
+                backgroundColor: 'rgba(30, 58, 138, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: { display: true, text: 'Speed (mph)' }
+                }
+            },
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    const enduranceCtx = document.getElementById('enduranceChart').getContext('2d');
+    new Chart(enduranceCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Surveillance Platform'],
+            datasets: [
+                {
+                    label: 'Aerostat (Days)',
+                    data: [5],
+                    backgroundColor: '#1e3a8a',
+                    borderColor: '#1e3a8a',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Drone (Hours)',
+                    data: [0.5],
+                    backgroundColor: '#9ca3af',
+                    borderColor: '#9ca3af',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    title: { display: true, text: 'Typical Continuous Endurance' },
+                    ticks: {
+                        callback: function(value, index, values) {
+                            return value > 1 ? value + ' Days' : (value * 24) + ' Hours';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                     callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.x !== null) {
+                                label += context.dataset.label.includes('Days') ? context.parsed.x + ' Days' : (context.parsed.x * 24) + ' Min';
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+</body>
+</html>
